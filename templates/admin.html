@@ -2,55 +2,338 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Panel</title>
+  <!-- Ensures the page scales correctly on mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - License Key Management</title>
+  <style>
+    :root {
+      --primary-color: #0275d8;
+      --primary-hover: #025aa5;
+      --success-color: #5cb85c;
+      --success-hover: #4cae4c;
+      --danger-color: #d9534f;
+      --danger-hover: #c9302c;
+      --bg-color: #f4f4f4;
+      --text-color: #333;
+      --container-bg: #fff;
+      --border-color: #ddd;
+      --table-hover: #f9f9f9;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-color);
+    }
+    .header {
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 1em;
+      text-align: center;
+      margin-bottom: 1em;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--container-bg);
+      padding: 20px;
+      box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 2em;
+    }
+    h2 {
+      text-align: center;
+      color: var(--text-color);
+      margin-bottom: 1em;
+    }
+    /* Search form */
+    .search-form {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .search-form input[type="text"] {
+      width: 250px;
+      padding: 0.5em;
+      border: 1px solid var(--border-color);
+      border-radius: 3px 0 0 3px;
+      outline: none;
+    }
+    .search-form button {
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      padding: 0.5em 1em;
+      cursor: pointer;
+      border-radius: 0 3px 3px 0;
+      transition: background-color 0.3s ease;
+    }
+    .search-form button:hover {
+      background-color: var(--primary-hover);
+    }
+    form {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    label {
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    select {
+      padding: 0.5em;
+      margin-right: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 3px;
+      background-color: #fff;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.5em 1em;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      color: #fff;
+      font-size: 0.9rem;
+      transition: background-color 0.3s ease;
+      margin: 0.2em 0;
+    }
+    .btn--primary {
+      background-color: var(--primary-color);
+    }
+    .btn--primary:hover {
+      background-color: var(--primary-hover);
+    }
+    .btn--success {
+      background-color: var(--success-color);
+    }
+    .btn--success:hover {
+      background-color: var(--success-hover);
+    }
+    .btn--danger {
+      background-color: var(--danger-color);
+    }
+    .btn--danger:hover {
+      background-color: var(--danger-hover);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 40px;
+    }
+    thead {
+      background-color: #f8f8f8;
+    }
+    th, td {
+      padding: 0.8em;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+    tr {
+      transition: background-color 0.2s;
+    }
+    tr:hover {
+      background-color: var(--table-hover);
+    }
+    .status--expired {
+      color: red;
+      font-weight: bold;
+    }
+    .status--active {
+      color: green;
+      font-weight: bold;
+    }
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+      tr {
+        border: 1px solid var(--border-color);
+        margin-bottom: 5px;
+      }
+      td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        white-space: normal;
+      }
+      td:before {
+        position: absolute;
+        top: 0.8em;
+        left: 0.8em;
+        width: 45%;
+        font-weight: bold;
+      }
+      table.active-licenses td:nth-of-type(1):before { content: "License Key"; }
+      table.active-licenses td:nth-of-type(2):before { content: "Created At"; }
+      table.active-licenses td:nth-of-type(3):before { content: "Expires In"; }
+      table.active-licenses td:nth-of-type(4):before { content: "Logged In?"; }
+      table.active-licenses td:nth-of-type(5):before { content: "Status"; }
+      table.active-licenses td:nth-of-type(6):before { content: "Actions"; }
+      table.expired-licenses td:nth-of-type(1):before { content: "License Key"; }
+      table.expired-licenses td:nth-of-type(2):before { content: "Created At"; }
+      table.expired-licenses td:nth-of-type(3):before { content: "Expires In"; }
+      table.expired-licenses td:nth-of-type(4):before { content: "Logged In?"; }
+      table.expired-licenses td:nth-of-type(5):before { content: "Status"; }
+      table.expired-licenses td:nth-of-type(6):before { content: "Actions"; }
+    }
+  </style>
 </head>
 <body>
-  <h1>License Key Management</h1>
+  <!-- HEADER -->
+  <div class="header">
+    <h1>License Key Management</h1>
+  </div>
 
-  <!-- Form to generate a new license key -->
-  <h2>Generate a New License Key</h2>
-  <form action="{{ url_for('generate_key') }}" method="POST">
-    <label for="duration">Duration:</label>
-    <select name="duration" id="duration">
-      <option value="2_minutes">2 Minutes</option>
-      <option value="2_hours">2 Hours</option>
-      <option value="1_day">1 Day</option>
-    </select>
-    <button type="submit">Generate Key</button>
-  </form>
+  <!-- SEARCH FORM -->
+  <div class="container">
+    <form class="search-form" method="GET" action="{{ url_for('admin_page') }}">
+      <input 
+        type="text" 
+        name="q" 
+        placeholder="Search by license key..."
+        value="{{ search_query if search_query else '' }}"
+      >
+      <button type="submit">Search</button>
+    </form>
+  </div>
 
-  <hr>
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <!-- FORM: Generate a new license key -->
+    <h2>Generate a New License Key</h2>
+    <form action="{{ url_for('generate_key') }}" method="POST">
+      <label for="duration">Duration:</label>
+      <select name="duration" id="duration">
+        <option value="2_minutes">2 Minutes</option>
+        <option value="2_hours">2 Hours</option>
+        <option value="1_day">1 Day</option>
+      </select>
+      <button type="submit" class="btn btn--success">Generate Key</button>
+    </form>
 
-  <!-- Table of existing license keys -->
-  <table border="1">
-    <tr>
-      <th>License Key</th>
-      <th>Created At</th>
-      <th>Expires In</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
-    {% for license in licenses %}
-    <tr>
-      <td>{{ license.key }}</td>
-      <td>{{ license.created_at }}</td>
-      <td>{{ license.expiration_minutes }} minutes</td>
-      <td>
-        {% set expiration_time = license.created_at + timedelta(minutes=license.expiration_minutes) %}
-        {% if expiration_time < now %}
-          <span style="color: red;">Expired</span>
-        {% else %}
-          <span style="color: green;">Active</span>
-        {% endif %}
-      </td>
-      <td>
-        <!-- Form to delete the license key -->
-        <form action="{{ url_for('delete_key', key_id=license.id) }}" method="POST">
-          <button type="submit">Delete</button>
-        </form>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
+    <!-- ACTIVE LICENSE KEYS (newest first) -->
+    <h2>Active License Keys</h2>
+    <table class="active-licenses">
+      <thead>
+        <tr>
+          <th>License Key</th>
+          <th>Created At</th>
+          <th>Expires In</th>
+          <th>Logged In?</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for license in licenses|sort(attribute='created_at', reverse=True) %}
+          {% set expiration_time = license.created_at + timedelta(minutes=license.expiration_minutes) %}
+          {% if expiration_time >= now %}
+          <tr>
+            <td>{{ license.key }}</td>
+            <td>{{ license.created_at }}</td>
+            <td>{{ license.expiration_minutes }} minutes</td>
+            <td>
+              {% if license.is_logged_in %}
+                <span class="status--active">Yes</span>
+                {% if license.device_id %}
+                  <br>(Device: {{ license.device_id }})
+                {% endif %}
+              {% else %}
+                <span class="status--expired">No</span>
+              {% endif %}
+            </td>
+            <td><span class="status--active">Active</span></td>
+            <td>
+              <button 
+                class="btn btn--primary" 
+                type="button"
+                onclick="copyLicense('{{ license.key }}', '{{ license.expiration_minutes }}')">
+                Copy
+              </button>
+              <form action="{{ url_for('delete_key', key_id=license.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn--danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- EXPIRED LICENSE KEYS (newest first) -->
+    <h2>Expired License Keys</h2>
+    <table class="expired-licenses">
+      <thead>
+        <tr>
+          <th>License Key</th>
+          <th>Created At</th>
+          <th>Expires In</th>
+          <th>Logged In?</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for license in licenses|sort(attribute='created_at', reverse=True) %}
+          {% set expiration_time = license.created_at + timedelta(minutes=license.expiration_minutes) %}
+          {% if expiration_time < now %}
+          <tr>
+            <td>{{ license.key }}</td>
+            <td>{{ license.created_at }}</td>
+            <td>{{ license.expiration_minutes }} minutes</td>
+            <td>
+              {% if license.is_logged_in %}
+                <span class="status--active">Yes</span>
+                {% if license.device_id %}
+                  <br>(Device: {{ license.device_id }})
+                {% endif %}
+              {% else %}
+                <span class="status--expired">No</span>
+              {% endif %}
+            </td>
+            <td><span class="status--expired">Expired</span></td>
+            <td>
+              <button 
+                class="btn btn--primary" 
+                type="button"
+                onclick="copyLicense('{{ license.key }}', '{{ license.expiration_minutes }}')">
+                Copy
+              </button>
+              <form action="{{ url_for('delete_key', key_id=license.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn--danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- JavaScript for copying license info -->
+  <script>
+    function copyLicense(key, expirationMinutes) {
+      // Format the string as desired:
+      const copyText = `License Key: ${key}\nExpires In: ${expirationMinutes} minutes`;
+      navigator.clipboard.writeText(copyText).then(function() {
+        alert('License information copied to clipboard!');
+      }, function(err) {
+        alert('Failed to copy license information.');
+      });
+    }
+  </script>
 </body>
 </html>

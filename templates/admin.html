@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+</head>
+<body>
+  <h1>License Key Management</h1>
+
+  <!-- Form to generate a new license key -->
+  <h2>Generate a New License Key</h2>
+  <form action="{{ url_for('generate_key') }}" method="POST">
+    <label for="duration">Duration:</label>
+    <select name="duration" id="duration">
+      <option value="2_minutes">2 Minutes</option>
+      <option value="2_hours">2 Hours</option>
+      <option value="1_day">1 Day</option>
+    </select>
+    <button type="submit">Generate Key</button>
+  </form>
+
+  <hr>
+
+  <!-- Table of existing license keys -->
+  <table border="1">
+    <tr>
+      <th>License Key</th>
+      <th>Created At</th>
+      <th>Expires In</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    {% for license in licenses %}
+    <tr>
+      <td>{{ license.key }}</td>
+      <td>{{ license.created_at }}</td>
+      <td>{{ license.expiration_minutes }} minutes</td>
+      <td>
+        {% set expiration_time = license.created_at + timedelta(minutes=license.expiration_minutes) %}
+        {% if expiration_time < now %}
+          <span style="color: red;">Expired</span>
+        {% else %}
+          <span style="color: green;">Active</span>
+        {% endif %}
+      </td>
+      <td>
+        <!-- Form to delete the license key -->
+        <form action="{{ url_for('delete_key', key_id=license.id) }}" method="POST">
+          <button type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

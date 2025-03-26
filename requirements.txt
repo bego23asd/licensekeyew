@@ -59,7 +59,6 @@ PyJWT==2.10.1
 pymongo==4.11.1
 PyMsgBox==1.0.9
 pyperclip==1.9.0
-pypiwin32==223
 PyRect==0.2.0
 PyScreeze==1.0.1
 PySocks==1.7.1
@@ -68,6 +67,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python-jose==3.4.0
 pytweening==1.2.0
+pywin32-ctypes==0.2.3
 requests==2.32.3
 rsa==4.9
 selenium==4.27.1

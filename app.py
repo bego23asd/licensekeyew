@@ -41,7 +41,7 @@ def validate_key():
     license = LicenseKey.query.filter_by(key=license_key).first()
 
     if not license:
-        return jsonify({"status": "error", "message": "Invalid key Or Deleted Licensed Key"}), 403
+        return jsonify({"status": "error", "message": "Invalid key"}), 403
 
     # Check if key is expired
     expiration_time = license.created_at + timedelta(minutes=license.expiration_minutes)
@@ -68,13 +68,33 @@ def validate_key():
 def home():
     return render_template('index.html')
 
-@app.route('/admin')
+from flask import request
+
+from flask import request
+
+@app.route('/admin', methods=['GET'])
 def admin_page():
     now = datetime.utcnow()
-    licenses = LicenseKey.query.all()
-    # Pass 'timedelta' into the template so we can use it in Jinja
-    return render_template('admin.html', licenses=licenses, now=now, timedelta=timedelta)
+    
+    # Grab the search query from the URL's query parameters
+    search_query = request.args.get('q', '')
 
+    if search_query:
+        # Filter by partial match on 'key'
+        licenses = LicenseKey.query.filter(LicenseKey.key.contains(search_query)).all()
+    else:
+        # If no search query, fetch all
+        licenses = LicenseKey.query.all()
+
+    return render_template(
+        'admin.html',
+        licenses=licenses,
+        now=now,
+        timedelta=timedelta,
+        search_query=search_query
+    )
+
+    
 @app.route('/generate-key', methods=['POST'])
 def generate_key():
     # Grab the 'duration' from the form data

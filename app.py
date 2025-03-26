@@ -41,7 +41,7 @@ def validate_key():
     license = LicenseKey.query.filter_by(key=license_key).first()
 
     if not license:
-        return jsonify({"status": "error", "message": "Invalid key"}), 403
+        return jsonify({"status": "error", "message": "Invalid key Or Deleted Licensed Key"}), 403
 
     # Check if key is expired
     expiration_time = license.created_at + timedelta(minutes=license.expiration_minutes)
